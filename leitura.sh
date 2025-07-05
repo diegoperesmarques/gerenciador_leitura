@@ -78,6 +78,8 @@ function excluir_livros()
 
 function principal() {
 
+    inicializa_banco
+
     local -a OPCOES_MENU_PRINCIPAL=(
         "1" "Livros"
         "2" "Histórico de leitura"

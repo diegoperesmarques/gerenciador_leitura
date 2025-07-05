@@ -38,7 +38,7 @@ imprimir_titulo() {
 }
 
 
-function menu_opcoes() {
+menu_opcoes() {
 
       local titulo="$1"
     shift 
@@ -86,4 +86,28 @@ function menu_opcoes() {
         fi
     done
 
+}
+
+
+inicializa_banco() {
+
+  DB_FILE="leitura.db"
+
+    if [ ! -f "$DB_FILE" ]; then
+        echo "O banco de dados '$DB_FILE' não existe. Criando..."
+    fi
+
+    sqlite3 "$DB_FILE" <<EOF
+      CREATE TABLE IF NOT EXISTS livros (
+          id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+          nome VARCHAR(150) NOT NULL,
+          autor VARCHAR(100) NOT NULL,
+          isbn_issn VARCHAR(50) NOT NULL,
+          num_paginas INT NOT NULL,
+          data_criacao DATETIME NOT NULL,
+          data_alteracao DATETIME NULL,
+          data_exclusao DATETIME NULL
+      );
+EOF
+    echo "Banco de dados e tabela 'livros' verificados/criados com sucesso."
 }
