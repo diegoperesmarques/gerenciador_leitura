@@ -36,7 +36,31 @@ function listar_livros()
 
 function cadastrar_livros() 
 {
-    echo "Chegou na função cadastrar livros"
+    imprimir_titulo "Dados do livro"
+
+    read -p "Nome do livro: " nome_livro
+    read -p "Autor do livro: " autor_livro
+    read -p "ISBN ou ISSN: " isbn_livro
+    read -p "Número de páginas: " num_paginas
+
+    DB_FILE="leitura.db"
+
+    DATA_CRIACAO=$(date +"%Y-%m-%d %H:%M:%S")
+
+
+    SQL_INSERT="INSERT INTO livros (nome, autor, isbn_issn, num_paginas, data_criacao) VALUES 
+    ('$nome_livro', '$autor_livro', '$isbn_livro', $num_paginas, '$DATA_CRIACAO');"
+
+    sqlite3 "$DB_FILE" "$SQL_INSERT"
+
+    if [ $? -eq 0 ]; then
+        echo ""
+        echo "Livro '$nome_livro' inserido com sucesso!"
+    else
+        echo ""
+        echo "Erro ao inserir o livro no banco de dados."
+    fi
+
 }
 
 function editar_livros() 
