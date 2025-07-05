@@ -2,7 +2,7 @@
 
 source ./funcoes_uteis.sh
 
-function menu_livros() {
+menu_livros() {
     local -a OPCOES_MENU_PRINCIPAL=(
         "1" "Listar livros"
         "2" "Cadastrar livros"
@@ -29,12 +29,41 @@ function menu_livros() {
 
 }
 
-function listar_livros() 
+listar_livros() 
 {
-    echo "Chegou na função listar livros"
+
+    DB_FILE="leitura.db"
+
+    SQL_SELECT="SELECT id, nome, autor, isbn_issn, num_paginas, data_criacao FROM livros"
+
+    AWK_FORMATTER='
+    BEGIN { 
+        # Define o separador de campo dentro do script para melhor organização
+        FS="|" 
+    }
+    {
+        split($6, datetime, " ")
+        
+        split(datetime[1], date, "-")
+        
+        data_formatada = date[3] "/" date[2] "/" date[1] " " datetime[2]
+
+        print "--------------------------------------------------"
+        printf "ID: %s\n", $1
+        printf "NOME: %s\n", $2
+        printf "AUTOR: %s\n", $3
+        printf "ISBN OU ISSN: %s\n", $4
+        printf "PÁGINAS: %s\n", $5
+        printf "CRIAÇÃO: %s\n", data_formatada
+        print "" 
+    }
+    '
+
+    sqlite3 "$DB_FILE" "$SQL_SELECT" | awk "$AWK_FORMATTER"
+
 }
 
-function cadastrar_livros() 
+cadastrar_livros() 
 {
     imprimir_titulo "Dados do livro"
 
@@ -61,14 +90,18 @@ function cadastrar_livros()
         echo "Erro ao inserir o livro no banco de dados."
     fi
 
+    read -p "Tecle enter para voltar ..." 
+
+    menu_livros
+
 }
 
-function editar_livros() 
+editar_livros() 
 {
     echo "Chegou na função editar livros"
 }
 
-function excluir_livros() 
+excluir_livros() 
 {
     echo "Chegou na função excluir livros"
 }
@@ -76,7 +109,7 @@ function excluir_livros()
 
 
 
-function principal() {
+principal() {
 
     inicializa_banco
 
